@@ -270,8 +270,7 @@
 </main>
 
 <script>
-  // ITパスポート用スプレッドシートの公開CSV URL
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0/gviz/tq?tqx=out:csv";
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAFp_pOrjWyO6rytc06qO0P5qQhvvb_o6SiMIK7V_Tken3iw1VktPXOD3gd2eOg8VyjDSMSOYyJAM/pub?output=csv";
 
   let wordList = [];
   let currentWord = null;
@@ -461,3 +460,20 @@
   $("speak").onclick = speakTerm;
 
   $("answer").oninput = () => {
+    updateGuide();
+    checkAnswer();
+  };
+
+  document.addEventListener("keydown", e => {
+    if (e.repeat) return;
+    const tag = (document.activeElement?.tagName || "").toLowerCase();
+    if (tag === "input" && e.key !== "3") return;
+
+    if (e.key === "1" && !isGaming) { e.preventDefault(); startGame(); }
+    else if (e.key === "2" && isGaming) { e.preventDefault(); nextQuestion(); }
+    else if (e.key === "3" && isGaming) { e.preventDefault(); speakTerm(); }
+  });
+</script>
+
+</body>
+</html>
