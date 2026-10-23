@@ -270,7 +270,8 @@
 </main>
 
 <script>
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAFp_pOrjWyO6rytc06qO0P5qQhvvb_o6SiMIK7V_Tken3iw1VktPXOD3gd2eOg8VyjDSMSOYyJAM/pub?output=csv";
+  // 純粋なCSVのみを取得するURL形式
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0/gviz/tq?tqx=out:csv";
 
   let wordList = [];
   let currentWord = null;
@@ -329,7 +330,7 @@
         typeText: cleanText(r[0]).toLowerCase().replace(/\s+/g, ''),
         term: cleanText(r[1]),
         meaning: cleanText(r[2])
-      })).filter(item => item.typeText && item.term);
+      })).filter(item => item.typeText && item.term && !item.typeText.includes('function'));
     })
     .catch(() => {});
 
