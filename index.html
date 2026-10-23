@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💻 ITパスポート 用語タイピング練習</title>
+  <style>
+    :root {
+      --primary-color: #0d47a1;
+      --bg-color: #f5f6f8;
+      --card-bg: #ffffff;
+      --text-color: #111111;
+      --ok-bg: #effaf0;
+      --bad-bg: #fff1f1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 760px;
+      background: var(--card-bg);
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .coach {
+      position: relative;
+      background: #e3f2fd;
+      border: 2px dashed #90caf9;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      overflow: hidden;
+    }
+
+    .coach-avatar {
+      font-size: 4rem;
+      user-select: none;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: 12px;
+      left: 10px;
+      right: 10px;
+      background: rgba(17, 17, 17, 0.85);
+      color: #fff;
+      border: 1px solid #ffde00;
+      border-radius: 12px;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s ease;
+    }
+
+    .bubble.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      border: 1px solid #e9edf3;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    button {
+      font-size: 15px;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 16px;
+      background: #e9edf3;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #dce2eb; }
+
+    button.primary {
+      background: var(--primary-color);
+      color: #fff;
+      font-weight: bold;
+    }
+
+    button.primary:hover { background: #0a3578; }
+
+    #count {
+      margin-left: auto;
+      font-weight: bold;
+      color: #666;
+    }
+
+    .term-title {
+      font-size: 36px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--primary-color);
+      margin: 16px 0 4px;
+      min-height: 1.3em;
+    }
+
+    .meaning-subtitle {
+      text-align: center;
+      color: #333;
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 1.4;
+      margin-bottom: 16px;
+      min-height: 2.8em;
+    }
+
+    .pinyin-box {
+      font-family: monospace;
+      font-size: 26px;
+      text-align: center;
+      letter-spacing: 3px;
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+      margin-bottom: 12px;
+      min-height: 52px;
+      word-break: break-all;
+    }
+
+    .char-correct { color: #28a745; font-weight: bold; }
+    .char-wrong { color: #d32f2f; background-color: #ffebee; font-weight: bold; padding: 0 2px; border-radius: 3px; }
+    .char-next {
+      color: var(--primary-color);
+      font-weight: bold;
+      text-decoration: underline;
+      animation: blink 0.8s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0.3; }
+    }
+
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      font-size: 24px;
+      font-family: monospace;
+      text-align: center;
+      padding: 12px;
+      border: 3px solid #ccd2da;
+      border-radius: 12px;
+      margin: 8px 0;
+      outline: none;
+    }
+
+    input.ok { background: var(--ok-bg) !important; border-color: #28a745 !important; }
+    input.bad { background: var(--bad-bg) !important; border-color: #d32f2f !important; }
+
+    .guide {
+      text-align: center;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 8px 0;
+      min-height: 24px;
+    }
+
+    .kbd {
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e9edf3;
+      overflow-x: auto;
+    }
+
+    .kbdtitle { text-align: center; font-weight: 800; margin-bottom: 8px; font-size: 14px; color: #555; }
+    .krow { display: flex; gap: 4px; justify-content: center; margin: 4px 0; }
+    .key {
+      min-width: 42px;
+      height: 42px;
+      border: 2px solid #d4d8df;
+      border-radius: 8px;
+      background: #f0f0f0;
+      text-align: center;
+      line-height: 38px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #333;
+    }
+    .key.nextkey {
+      background: var(--primary-color) !important;
+      border-color: #0a3578 !important;
+      color: #fff !important;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(13, 71, 161, 0.4);
+    }
+
+    @media (max-width: 650px) {
+      .layout { grid-template-columns: 1fr; }
+      .coach { min-height: 120px; }
+      .key { min-width: 32px; height: 36px; line-height: 32px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<main>
+  <h2>💻 ITパスポート 用語タイピング練習</h2>
+
+  <div class="layout">
+    <div class="coach" id="coach">
+      <div class="coach-avatar">🤖</div>
+      <div class="bubble" id="bubble">GREAT!</div>
+    </div>
+
+    <div class="card">
+      <div class="btn-group">
+        <button class="primary" id="start">スタート [1]</button>
+        <button id="skip">スキップ [2]</button>
+        <button id="speak">🔊 読み上げ [3]</button>
+        <span id="count"></span>
+      </div>
+
+      <div id="termDisplay" class="term-title">「スタート」を押して開始</div>
+      <div id="meaningDisplay" class="meaning-subtitle"></div>
+
+      <div id="pinyinBox" class="pinyin-box"></div>
+
+      <input id="answer" type="text" autocomplete="off" placeholder="ここに入力（半角英字）" disabled>
+      
+      <div id="guide" class="guide"></div>
+    </div>
+  </div>
+
+  <div class="kbd">
+    <div class="kbdtitle">キーボードガイド</div>
+    <div id="keyboard"></div>
+  </div>
+</main>
+
+<script>
+  // ITパスポート用スプレッドシートの公開CSV URL
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0/gviz/tq?tqx=out:csv";
+
+  let wordList = [];
+  let currentWord = null;
+  let currentIndex = 0;
+  let score = 0;
+  const TOTAL_QUESTIONS = 10;
+  let isGaming = false;
+  let isLocked = false;
+
+  const $ = id => document.getElementById(id);
+
+  const ROWS = [
+    ["Q","W","E","R","T","Y","U","I","O","P"],
+    ["A","S","D","F","G","H","J","K","L"],
+    ["Z","X","C","V","B","N","M"]
+  ];
+
+  function buildKbd() {
+    let el = $("keyboard");
+    el.innerHTML = "";
+    ROWS.forEach(row => {
+      let r = document.createElement("div");
+      r.className = "krow";
+      row.forEach(k => {
+        let d = document.createElement("div");
+        d.className = "key";
+        d.dataset.key = k;
+        d.textContent = k;
+        r.appendChild(d);
+      });
+      el.appendChild(r);
+    });
+  }
+  buildKbd();
+
+  function cleanText(str) {
+    if (!str) return "";
+    return str.replace(/^"+|"+$/g, '').replace(/"/g, '').trim();
+  }
+
+  function parseCSV(text) {
+    const lines = text.split('\n');
+    return lines.map(line => {
+      if (!line.includes('"')) {
+        return line.split(',').map(s => cleanText(s));
+      }
+      return line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => cleanText(s));
+    });
+  }
+
+  fetch(CSV_URL)
+    .then(res => res.text())
+    .then(csv => {
+      const rows = parseCSV(csv).slice(1);
+      wordList = rows.map(r => ({
+        typeText: cleanText(r[0]).toLowerCase().replace(/\s+/g, ''),
+        term: cleanText(r[1]),
+        meaning: cleanText(r[2])
+      })).filter(item => item.typeText && item.term);
+    })
+    .catch(() => {});
+
+  function updateGuide() {
+    document.querySelectorAll(".key").forEach(x => x.classList.remove("nextkey"));
+    if (!isGaming || !currentWord) {
+      $("guide").textContent = "";
+      return;
+    }
+
+    const target = currentWord.typeText;
+    const typed = $("answer").value.toLowerCase().replace(/\s+/g, '');
+
+    let formattedHtml = "";
+    let firstMismatchIndex = -1;
+
+    for (let i = 0; i < target.length; i++) {
+      if (i < typed.length) {
+        if (typed[i] === target[i]) {
+          formattedHtml += `<span class="char-correct">${target[i]}</span>`;
+        } else {
+          formattedHtml += `<span class="char-wrong">${target[i]}</span>`;
+          if (firstMismatchIndex === -1) firstMismatchIndex = i;
+        }
+      } else if (i === typed.length && firstMismatchIndex === -1) {
+        formattedHtml += `<span class="char-next">${target[i]}</span>`;
+      } else {
+        formattedHtml += `<span>${target[i]}</span>`;
+      }
+    }
+
+    $("pinyinBox").innerHTML = formattedHtml;
+
+    if (firstMismatchIndex !== -1 || typed.length > target.length) {
+      $("answer").className = "bad";
+      $("guide").textContent = "打ち間違いがあります。Backspaceで戻してください。";
+      return;
+    }
+
+    $("answer").className = "";
+
+    if (typed.length < target.length) {
+      const nextChar = target[typed.length];
+      const keyId = nextChar.toUpperCase();
+      document.querySelector(`[data-key="${keyId}"]`)?.classList.add("nextkey");
+      $("guide").textContent = `次に打つキー: ${keyId}`;
+    } else {
+      $("guide").textContent = "";
+    }
+  }
+
+  function speakTerm() {
+    if (!currentWord || !window.speechSynthesis) return;
+    const u = new SpeechSynthesisUtterance(currentWord.term + "。" + currentWord.meaning);
+    u.lang = "ja-JP";
+    u.rate = 1.0;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  function react() {
+    const b = $("bubble");
+    const phrases = ["GOOD!", "PERFECT!", "EXCELLENT!", "正解！"];
+    b.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+    b.classList.add("show");
+    setTimeout(() => b.classList.remove("show"), 1200);
+  }
+
+  function nextQuestion() {
+    if (currentIndex >= TOTAL_QUESTIONS) return endGame();
+
+    isLocked = false;
+    currentIndex++;
+
+    const rand = Math.floor(Math.random() * wordList.length);
+    currentWord = wordList[rand];
+
+    $("termDisplay").textContent = currentWord.term;
+    $("meaningDisplay").textContent = currentWord.meaning;
+    $("count").textContent = `${currentIndex} / ${TOTAL_QUESTIONS}`;
+    $("answer").value = "";
+    $("answer").disabled = false;
+    $("answer").focus();
+
+    updateGuide();
+    speakTerm();
+  }
+
+  function startGame() {
+    if (wordList.length === 0) return;
+    isGaming = true;
+    currentIndex = 0;
+    score = 0;
+    $("start").disabled = true;
+    nextQuestion();
+  }
+
+  function endGame() {
+    isGaming = false;
+    $("termDisplay").textContent = "🎉 ゲーム終了！";
+    $("meaningDisplay").textContent = `正答数: ${score} / ${TOTAL_QUESTIONS}`;
+    $("pinyinBox").innerHTML = "";
+    $("count").textContent = "";
+    $("answer").disabled = true;
+    $("answer").value = "";
+    $("start").disabled = false;
+    $("start").textContent = "もう一度スタート [1]";
+    updateGuide();
+  }
+
+  function checkAnswer() {
+    if (!isGaming || !currentWord || isLocked) return;
+
+    const typed = $("answer").value.toLowerCase().replace(/\s+/g, '');
+    const target = currentWord.typeText;
+
+    if (typed === target) {
+      isLocked = true;
+      score++;
+      $("answer").className = "ok";
+      react();
+      setTimeout(nextQuestion, 1200);
+    }
+  }
+
+  $("start").onclick = startGame;
+  $("skip").onclick = () => isGaming && nextQuestion();
+  $("speak").onclick = speakTerm;
+
+  $("answer").oninput = () => {
