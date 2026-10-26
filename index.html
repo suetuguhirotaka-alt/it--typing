@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ITパスポート タイピング</title>
+<title>ITパスポート 用語タイピング</title>
 <style>
 *{box-sizing:border-box}
 body{font-family:system-ui,sans-serif;background:#f3f6fb;margin:0;padding:16px;color:#172033}
@@ -26,7 +26,6 @@ button:disabled{opacity:.5}
 .row{display:flex;justify-content:center;gap:4px;margin:5px 0}
 .key{flex:1;max-width:51px;height:42px;border:1px solid #ccd3dc;border-radius:7px;background:#f1f3f5;text-align:center;line-height:40px;font-weight:bold}
 .key.active{background:#f44336;color:white}
-.key.shift{background:#ffdc44;color:#222}
 details{border-top:1px solid #ddd;margin-top:22px;padding-top:14px}
 textarea{width:100%;height:110px;padding:10px}
 #error{color:#c22;text-align:center}
@@ -48,7 +47,7 @@ main{padding:12px}
 <button id="speak">🔊 読み上げ [3]</button>
 </div>
 
-<div id="status">データと日本語辞書を準備しています…</div>
+<div id="status">スプレッドシートを読み込み中…</div>
 <div id="count"></div>
 <div id="term">スタートを押してください</div>
 <div id="meaning"></div>
@@ -67,31 +66,26 @@ disabled>
 <div id="error"></div>
 
 <details>
-<summary>Googleから読み込めない場合：A列・B列を直接貼り付ける</summary>
-<p>スプレッドシートのA列・B列をコピーして貼り付けてください（タブ区切り）。</p>
+<summary>データを直接貼り付ける</summary>
+<p>A列（課題）・B列（解説）をコピーして貼り付けてください。</p>
 <textarea id="manual" placeholder="東京&#9;日本の首都&#10;IPS&#9;不正侵入防止システム"></textarea>
 <button id="load">貼り付けたデータを読み込む</button>
 </details>
 
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
-
 <script>
 'use strict';
 
-const SHEET_ID =
-'1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0';
-
-const CSV_URL =
-`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
-
-const DICT_URL =
-'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
+const SHEET_ID = '1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+const DICT_URL = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
+const LIB_URL = 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js';
 
 const $ = id => document.getElementById(id);
 
 let tokenizer = null;
+let rawRows = [];
 let words = [];
 let current = null;
 let round = 0;
@@ -99,15 +93,26 @@ let score = 0;
 let playing = false;
 let locked = false;
 let timer = null;
+let dictionaryLoading = false;
+
+const CACHE_KEY = 'itpassport_romaji_cache_v2';
+
+let readingCache = {};
+
+try {
+  readingCache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+} catch(e) {
+  readingCache = {};
+}
 
 const OVERRIDE = {
   '東京':'tokyo',
   '大阪':'oosaka',
   '損益分岐点':'soniekibunkiten',
-  '減価償却':'genkashoukyaku'
+  '減価償却':'genkashoukyaku',
+  '独占禁止法':'dokusenkinshihou'
 };
 
-// キーボード
 const ROWS = [
   'QWERTYUIOP',
   'ASDFGHJKL',
@@ -129,9 +134,8 @@ ROWS.forEach(row => {
   $('keyboard').append(d);
 });
 
-// CSV解析
 function csvParse(s){
-  let rows = [];
+  const rows = [];
   let row = [];
   let cell = '';
   let quoted = false;
@@ -139,31 +143,28 @@ function csvParse(s){
   for(let i=0;i<s.length;i++){
     const c = s[i];
 
-    if(c==='"'){
-      if(quoted && s[i+1]==='"'){
+    if(c === '"'){
+      if(quoted && s[i+1] === '"'){
         cell += '"';
         i++;
       }else{
         quoted = !quoted;
       }
-    }
-    else if(c===',' && !quoted){
+    }else if(c === ',' && !quoted){
       row.push(cell);
       cell = '';
-    }
-    else if((c==='\n'||c==='\r')&&!quoted){
-      if(c==='\r'&&s[i+1]==='\n')i++;
+    }else if((c === '\n' || c === '\r') && !quoted){
+      if(c === '\r' && s[i+1] === '\n') i++;
       row.push(cell);
       rows.push(row);
       row = [];
       cell = '';
-    }
-    else{
+    }else{
       cell += c;
     }
   }
 
-  if(cell||row.length){
+  if(cell || row.length){
     row.push(cell);
     rows.push(row);
   }
@@ -171,7 +172,6 @@ function csvParse(s){
   return rows;
 }
 
-// かな→ローマ字
 const kanaMap = {
 'あ':'a','い':'i','う':'u','え':'e','お':'o',
 'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
@@ -190,7 +190,7 @@ const kanaMap = {
 'ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po',
 'ぁ':'xa','ぃ':'xi','ぅ':'xu','ぇ':'xe','ぉ':'xo',
 'ゃ':'xya','ゅ':'xyu','ょ':'xyo',
-'ゔ':'vu','ー':'-'
+'ゔ':'vu'
 };
 
 const pairs = {};
@@ -217,42 +217,34 @@ Object.assign(pairs,{
 });
 
 function kanaToRomaji(str){
-
   let s = Array.from(str).map(c=>{
-    let n = c.charCodeAt(0);
-    return n>=0x30a1&&n<=0x30f6
-      ? String.fromCharCode(n-0x60)
+    const n = c.charCodeAt(0);
+    return n >= 0x30a1 && n <= 0x30f6
+      ? String.fromCharCode(n - 0x60)
       : c;
   }).join('');
 
   let out = '';
 
   for(let i=0;i<s.length;i++){
+    const c = s[i];
+    const pair = s.slice(i,i+2);
 
-    let c = s[i];
-    let pair = s.slice(i,i+2);
-
-    if(c==='っ'){
-      let next =
+    if(c === 'っ'){
+      const next =
         pairs[s.slice(i+1,i+3)] ||
         kanaMap[s[i+1]] || '';
 
-      out += next.startsWith('ch')
-        ? 't'
-        : next[0] || '';
-
+      out += next.startsWith('ch') ? 't' : (next[0] || '');
       continue;
     }
 
-    if(c==='ん'){
-      let next =
+    if(c === 'ん'){
+      const next =
         pairs[s.slice(i+1,i+3)] ||
         kanaMap[s[i+1]] || '';
 
-      out += /^[aiueoyn]/.test(next)
-        ? 'nn'
-        : 'n';
-
+      out += /^[aiueoyn]/.test(next) ? 'nn' : 'n';
       continue;
     }
 
@@ -262,9 +254,9 @@ function kanaToRomaji(str){
       continue;
     }
 
-    if(c==='ー'){
+    if(c === 'ー'){
       const v = out.match(/[aeiou](?!.*[aeiou])/);
-      if(v)out += v[0];
+      if(v) out += v[0];
       continue;
     }
 
@@ -274,25 +266,22 @@ function kanaToRomaji(str){
   return out;
 }
 
-// 漢字の読みをローマ字へ変換
 function readingFor(term){
-
-  if(OVERRIDE[term]){
-    return OVERRIDE[term];
-  }
+  if(OVERRIDE[term]) return OVERRIDE[term];
 
   if(/^[\x20-\x7e]+$/.test(term)){
     return term.toLowerCase().replace(/\s+/g,'');
   }
 
-  if(!tokenizer){
-    return null;
+  if(readingCache[term]){
+    return readingCache[term];
   }
+
+  if(!tokenizer) return null;
 
   let output = '';
 
   for(const t of tokenizer.tokenize(term)){
-
     const part = t.surface_form;
 
     if(/^[\x20-\x7e]+$/.test(part)){
@@ -319,21 +308,28 @@ function readingFor(term){
     output += converted;
   }
 
-  return /^[a-z0-9&.\/-]+$/i.test(output)
-    ? output
-    : null;
+  if(!/^[a-z0-9&.\/-]+$/i.test(output)){
+    return null;
+  }
+
+  readingCache[term] = output;
+  return output;
 }
 
-// 課題登録
-function register(rows){
+function saveCache(){
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(readingCache));
+  } catch(e) {}
+}
 
-  words = [];
-  let excluded = [];
+function register(rows){
+  rawRows = rows;
+  const newWords = [];
+  let pending = 0;
 
   for(const row of rows){
-
-    const term = String(row[0]??'').trim();
-    const meaning = String(row[1]??'').trim();
+    const term = String(row[0] ?? '').trim();
+    const meaning = String(row[1] ?? '').trim();
 
     if(!term || ['課題','必須用語','A列'].includes(term)){
       continue;
@@ -342,31 +338,30 @@ function register(rows){
     const target = readingFor(term);
 
     if(target){
-      words.push({term,meaning,target});
+      newWords.push({term,meaning,target});
     }else{
-      excluded.push(term);
+      pending++;
     }
   }
 
-  $('start').disabled = !words.length;
+  words = newWords;
+  saveCache();
+
+  $('start').disabled = playing || !words.length;
 
   $('status').textContent =
-    `${words.length}語を読み込みました。` +
-    (excluded.length
-      ? ` 読みを判定できない${excluded.length}語は除外：${excluded.slice(0,5).join('、')}`
-      : '');
+    `${words.length}語が出題可能` +
+    (pending ? `／漢字など${pending}語は読みを準備中` : '（全件準備完了）');
 
   return words.length;
 }
 
-// キーボードガイド
 function guide(){
-
   document.querySelectorAll('.key').forEach(k=>{
     k.classList.remove('active');
   });
 
-  if(!current)return;
+  if(!current) return;
 
   const target = current.target;
   const typed = $('answer').value.toLowerCase().replace(/\s+/g,'');
@@ -376,55 +371,41 @@ function guide(){
   let wrong = false;
 
   for(let i=0;i<target.length;i++){
-
-    let span = document.createElement('span');
+    const span = document.createElement('span');
     span.textContent = target[i];
 
-    if(i<typed.length){
-
-      span.className =
-        typed[i]===target[i] ? 'ok' : 'bad';
-
-      if(span.className==='bad'){
-        wrong = true;
-      }
-
-    }else if(i===typed.length){
+    if(i < typed.length){
+      span.className = typed[i] === target[i] ? 'ok' : 'bad';
+      if(span.className === 'bad') wrong = true;
+    }else if(i === typed.length){
       span.className = 'next';
     }
 
     $('typing').append(span);
   }
 
-  if(wrong||typed.length>target.length){
-    $('guide').textContent =
-      '入力ミス：Backspaceで戻してください';
+  if(wrong || typed.length > target.length){
+    $('guide').textContent = '入力ミス：Backspaceで戻してください';
     return;
   }
 
-  if(typed.length<target.length){
-
+  if(typed.length < target.length){
     const c = target[typed.length].toUpperCase();
 
-    document.querySelector(
-      `[data-key="${c}"]`
-    )?.classList.add('active');
+    document.querySelector(`[data-key="${c}"]`)
+      ?.classList.add('active');
 
-    $('guide').textContent =
-      '次に押すキー：'+c;
-
+    $('guide').textContent = '次に押すキー：' + c;
   }else{
     $('guide').textContent = '';
   }
 }
 
-// 音声読み上げ
 function speak(){
-
-  if(!current||!window.speechSynthesis)return;
+  if(!current || !window.speechSynthesis) return;
 
   const u = new SpeechSynthesisUtterance(
-    current.term+'。'+current.meaning
+    current.term + '。' + current.meaning
   );
 
   u.lang = 'ja-JP';
@@ -434,12 +415,15 @@ function speak(){
   speechSynthesis.speak(u);
 }
 
-// 次の問題
 function next(){
-
   clearTimeout(timer);
 
-  if(round>=10){
+  if(round >= 10){
+    end();
+    return;
+  }
+
+  if(!words.length){
     end();
     return;
   }
@@ -447,8 +431,7 @@ function next(){
   locked = false;
   round++;
 
-  current =
-    words[Math.floor(Math.random()*words.length)];
+  current = words[Math.floor(Math.random() * words.length)];
 
   $('count').textContent = `${round} / 10`;
   $('term').textContent = current.term;
@@ -462,12 +445,9 @@ function next(){
   speak();
 }
 
-// スタート
 function start(){
-
   if(!words.length){
-    $('error').textContent =
-      '課題データを読み込んでください';
+    $('error').textContent = '課題データを読み込んでください';
     return;
   }
 
@@ -482,33 +462,24 @@ function start(){
   next();
 }
 
-// 終了
 function end(){
-
   playing = false;
   current = null;
 
   $('term').textContent = '🎉 ゲーム終了！';
-  $('meaning').textContent =
-    `正答数：${score} / 10`;
-
+  $('meaning').textContent = `正答数：${score} / 10`;
   $('count').textContent = '';
   $('typing').textContent = '';
-
   $('answer').value = '';
   $('answer').disabled = true;
-
   $('guide').textContent = '';
 
-  $('start').disabled = false;
-  $('start').textContent =
-    'もう一度スタート [1]';
+  $('start').disabled = !words.length;
+  $('start').textContent = 'もう一度スタート [1]';
 }
 
-// 入力判定
 $('answer').addEventListener('input',()=>{
-
-  if(!playing||locked)return;
+  if(!playing || locked) return;
 
   guide();
 
@@ -516,55 +487,43 @@ $('answer').addEventListener('input',()=>{
     $('answer').value.toLowerCase().replace(/\s+/g,'')
     === current.target
   ){
-
     locked = true;
     score++;
-
     $('answer').disabled = true;
     $('guide').textContent = '正解！ 🎉';
-
     timer = setTimeout(next,1200);
   }
 });
 
-// ボタン
 $('start').onclick = start;
 
 $('skip').onclick = ()=>{
-  if(playing&&!locked)next();
+  if(playing && !locked) next();
 };
 
 $('speak').onclick = speak;
 
-// ショートカット
 document.addEventListener('keydown',e=>{
-
   if(
     e.repeat ||
     e.isComposing ||
     ['INPUT','TEXTAREA'].includes(e.target.tagName)
-  ){
-    return;
-  }
+  ) return;
 
-  if(e.key==='1'&&!playing){
+  if(e.key === '1' && !playing){
     e.preventDefault();
     start();
-  }
-  else if(e.key==='2'&&playing&&!locked){
+  }else if(e.key === '2' && playing && !locked){
     e.preventDefault();
     next();
-  }
-  else if(e.key==='3'&&playing){
+  }else if(e.key === '3' && playing){
     e.preventDefault();
     speak();
   }
 });
 
-// 手動データ読み込み
 $('load').onclick = ()=>{
-
-  if(playing)return;
+  if(playing) return;
 
   const rows = $('manual').value
     .split(/\r?\n/)
@@ -573,48 +532,61 @@ $('load').onclick = ()=>{
 
   if(!register(rows)){
     $('error').textContent =
-      '有効な課題がありません。A列とB列をタブ区切りで貼り付けてください';
+      '有効な課題がありません。辞書の準備を待つか、英数字の課題を確認してください。';
+  }else{
+    $('error').textContent = '';
   }
 };
 
-// 初期読み込み
-async function init(){
+// 辞書を非同期で読み込む
+function loadDictionary(){
+  if(dictionaryLoading || tokenizer) return;
+  dictionaryLoading = true;
 
-  const waitTokenizer = new Promise((resolve,reject)=>{
+  const script = document.createElement('script');
+  script.src = LIB_URL;
 
-    if(typeof kuromoji==='undefined'){
-      reject(new Error('日本語解析ライブラリが読み込めません'));
+  script.onload = ()=>{
+    if(typeof kuromoji === 'undefined'){
+      dictionaryLoading = false;
       return;
     }
 
-    kuromoji.builder({
-      dicPath:DICT_URL
-    }).build((err,t)=>
-      err ? reject(err) : resolve(t)
-    );
-  });
+    kuromoji.builder({dicPath:DICT_URL}).build((err,t)=>{
+      dictionaryLoading = false;
 
-  try{
+      if(err){
+        $('status').textContent +=
+          '\n日本語辞書の読み込みに失敗しました。';
+        return;
+      }
 
-    tokenizer = await waitTokenizer;
+      tokenizer = t;
 
-    $('status').textContent =
-      '日本語辞書を準備しました。スプレッドシートを読み込み中…';
-
-  }catch(e){
-
-    $('status').textContent =
-      '日本語辞書の読み込みに失敗しました。英語と登録済みの一部の日本語用語のみ利用できます。';
-  }
-
-  try{
-
-    const res = await fetch(CSV_URL,{
-      cache:'no-store'
+      if(rawRows.length){
+        register(rawRows);
+      }
     });
+  };
+
+  script.onerror = ()=>{
+    dictionaryLoading = false;
+    $('status').textContent +=
+      '\n日本語辞書の読み込みに失敗しました。';
+  };
+
+  document.head.appendChild(script);
+}
+
+// シートを先に読み込む
+async function init(){
+  loadDictionary();
+
+  try{
+    const res = await fetch(CSV_URL,{cache:'no-store'});
 
     if(!res.ok){
-      throw new Error('HTTP '+res.status);
+      throw new Error('HTTP ' + res.status);
     }
 
     const text = await res.text();
@@ -623,23 +595,17 @@ async function init(){
       throw new Error('CSVではなくHTMLが返されました');
     }
 
-    const n = register(csvParse(text));
-
-    if(!n){
-      throw new Error('有効な課題がありません');
-    }
+    register(csvParse(text));
 
   }catch(e){
-
     $('status').textContent =
-      'スプレッドシートの取得に失敗：'+
-      e.message+
-      '。共有設定を確認するか、下の手動貼り付けを使ってください。';
+      'スプレッドシートの取得に失敗：' +
+      e.message +
+      '。共有設定を確認するか、手動貼り付けを使ってください。';
   }
 }
 
 init();
-
 </script>
 </body>
 </html>
