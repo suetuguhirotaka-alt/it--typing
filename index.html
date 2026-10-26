@@ -2,340 +2,168 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ITパスポート 用語タイピング練習</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ITパスポート タイピング</title>
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f5fa;
-  margin: 0;
-  padding: 15px;
-  color: #222;
-}
-
-main {
-  max-width: 780px;
-  margin: auto;
-  background: white;
-  padding: 22px;
-  border-radius: 16px;
-  box-shadow: 0 3px 15px #0001;
-}
-
-h2 {
-  text-align: center;
-  color: #0d47a1;
-}
-
-.buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-button {
-  padding: 11px 15px;
-  border: 0;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  background: #dce7f5;
-}
-
-button:hover {
-  background: #bfd5f0;
-}
-
-button:disabled {
-  opacity: .5;
-}
-
-#start {
-  background: #0d47a1;
-  color: white;
-}
-
-#term {
-  text-align: center;
-  font-size: 34px;
-  font-weight: bold;
-  color: #0d47a1;
-  margin: 25px 0 10px;
-  overflow-wrap: anywhere;
-}
-
-#meaning {
-  text-align: center;
-  font-size: 16px;
-  line-height: 1.7;
-  min-height: 65px;
-  margin-bottom: 15px;
-  white-space: pre-wrap;
-}
-
-#progress {
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-#typing {
-  text-align: center;
-  font-family: monospace;
-  font-size: 25px;
-  background: #f5f7fa;
-  border-radius: 8px;
-  padding: 15px;
-  min-height: 60px;
-  overflow-wrap: anywhere;
-}
-
-.correct {
-  color: green;
-}
-
-.wrong {
-  color: red;
-  background: #ffe5e5;
-}
-
-.next {
-  color: blue;
-  text-decoration: underline;
-}
-
-#answer {
-  width: 100%;
-  padding: 14px;
-  font-size: 24px;
-  text-align: center;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  margin-top: 15px;
-}
-
-#guide {
-  text-align: center;
-  color: #0d47a1;
-  font-weight: bold;
-  margin: 15px 0;
-  min-height: 25px;
-}
-
-#keyboard {
-  margin-top: 20px;
-}
-
-.keyrow {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-bottom: 5px;
-}
-
-.key {
-  flex: 1;
-  max-width: 50px;
-  height: 42px;
-  background: #eee;
-  border: 1px solid #bbb;
-  border-radius: 6px;
-  text-align: center;
-  line-height: 40px;
-  font-weight: bold;
-}
-
-.key.active {
-  background: #f44336;
-  color: white;
-}
-
-#status {
-  text-align: center;
-  margin: 15px 0;
-  font-size: 14px;
-  color: #666;
-}
-
-#manualArea {
-  margin-top: 25px;
-  border-top: 1px solid #ddd;
-  padding-top: 15px;
-}
-
-textarea {
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  margin-top: 8px;
-}
-
-@media(max-width:600px) {
-  main {
-    padding: 12px;
-  }
-
-  #term {
-    font-size: 27px;
-  }
-
-  .key {
-    height: 34px;
-    line-height: 32px;
-    font-size: 12px;
-  }
+*{box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#f3f6fb;margin:0;padding:16px;color:#172033}
+main{max-width:820px;margin:auto;background:white;border-radius:16px;padding:22px;box-shadow:0 4px 20px #0001}
+h2{text-align:center;color:#164b91}
+.buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+button{border:0;border-radius:9px;background:#dfe9f7;padding:11px 16px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+#start{background:#164b91;color:white}
+#status,#count,#guide{text-align:center;margin:12px 0}
+#status{color:#555;font-size:14px;white-space:pre-wrap}
+#term{font-size:34px;color:#164b91;text-align:center;font-weight:800;margin:22px 0 10px;overflow-wrap:anywhere}
+#meaning{text-align:center;line-height:1.7;white-space:pre-wrap;min-height:40px}
+#typing{font:26px monospace;letter-spacing:1px;background:#f5f7fa;padding:15px;text-align:center;border-radius:10px;overflow-wrap:anywhere;min-height:60px;margin-top:12px}
+.ok{color:green}
+.bad{color:#c22;background:#fee}
+.next{color:#164b91;text-decoration:underline}
+#answer{display:block;width:100%;margin:14px 0;padding:13px;font-size:24px;text-align:center;border:2px solid #ccd3dc;border-radius:10px}
+#guide{color:#164b91;font-weight:bold;min-height:25px}
+.row{display:flex;justify-content:center;gap:4px;margin:5px 0}
+.key{flex:1;max-width:51px;height:42px;border:1px solid #ccd3dc;border-radius:7px;background:#f1f3f5;text-align:center;line-height:40px;font-weight:bold}
+.key.active{background:#f44336;color:white}
+.key.shift{background:#ffdc44;color:#222}
+details{border-top:1px solid #ddd;margin-top:22px;padding-top:14px}
+textarea{width:100%;height:110px;padding:10px}
+#error{color:#c22;text-align:center}
+@media(max-width:550px){
+main{padding:12px}
+#term{font-size:27px}
+.key{height:33px;line-height:31px;font-size:12px}
 }
 </style>
 </head>
-
 <body>
-
 <main>
 
-<h2>💻 ITパスポート 用語タイピング練習</h2>
+<h2>💻 ITパスポート 用語タイピング</h2>
 
 <div class="buttons">
-  <button id="start">スタート [1]</button>
-  <button id="skip">スキップ [2]</button>
-  <button id="speak">🔊 読み上げ [3]</button>
+<button id="start" disabled>スタート [1]</button>
+<button id="skip">スキップ [2]</button>
+<button id="speak">🔊 読み上げ [3]</button>
 </div>
 
-<div id="status">データを読み込み中...</div>
-
-<div id="progress"></div>
-
+<div id="status">データと日本語辞書を準備しています…</div>
+<div id="count"></div>
 <div id="term">スタートを押してください</div>
-
 <div id="meaning"></div>
-
 <div id="typing"></div>
 
-<input
-  id="answer"
-  type="text"
-  autocomplete="off"
-  spellcheck="false"
-  placeholder="ここに課題を入力"
-  disabled
->
+<input id="answer"
+autocomplete="off"
+autocapitalize="off"
+spellcheck="false"
+inputmode="latin"
+placeholder="ローマ字・英字で入力"
+disabled>
 
 <div id="guide"></div>
-
 <div id="keyboard"></div>
+<div id="error"></div>
 
-<div id="manualArea">
-  <details>
-    <summary>データを手動で読み込む</summary>
-
-    <p>
-      スプレッドシートのA列・B列をコピーして、
-      下に貼り付けてください。
-    </p>
-
-    <textarea
-      id="manualData"
-      placeholder="IPS	不正侵入防止システム&#10;損益分岐点	売上高と総費用が等しくなる点"
-    ></textarea>
-
-    <button id="loadManual">貼り付けたデータを読み込む</button>
-  </details>
-</div>
+<details>
+<summary>Googleから読み込めない場合：A列・B列を直接貼り付ける</summary>
+<p>スプレッドシートのA列・B列をコピーして貼り付けてください（タブ区切り）。</p>
+<textarea id="manual" placeholder="東京&#9;日本の首都&#10;IPS&#9;不正侵入防止システム"></textarea>
+<button id="load">貼り付けたデータを読み込む</button>
+</details>
 
 </main>
 
-<script>
+<script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
 
-// =====================================
-// Googleスプレッドシート設定
-// =====================================
+<script>
+'use strict';
 
 const SHEET_ID =
-"1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0";
+'1Pperr1kTX8QshssUJioRD3rkL9wotE3YqwBj7DHf2h0';
 
 const CSV_URL =
 `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-
-// =====================================
-// 基本設定
-// =====================================
-
-const TOTAL = 10;
-
-let wordList = [];
-let currentWord = null;
-
-let questionNumber = 0;
-let score = 0;
-
-let playing = false;
-let locked = false;
-let composing = false;
-
-let questionTimer = null;
+const DICT_URL =
+'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/';
 
 const $ = id => document.getElementById(id);
 
+let tokenizer = null;
+let words = [];
+let current = null;
+let round = 0;
+let score = 0;
+let playing = false;
+let locked = false;
+let timer = null;
 
-// =====================================
+const OVERRIDE = {
+  '東京':'tokyo',
+  '大阪':'oosaka',
+  '損益分岐点':'soniekibunkiten',
+  '減価償却':'genkashoukyaku'
+};
+
+// キーボード
+const ROWS = [
+  'QWERTYUIOP',
+  'ASDFGHJKL',
+  'ZXCVBNM'
+];
+
+ROWS.forEach(row => {
+  const d = document.createElement('div');
+  d.className = 'row';
+
+  for(const c of row){
+    const k = document.createElement('div');
+    k.className = 'key';
+    k.dataset.key = c;
+    k.textContent = c;
+    d.append(k);
+  }
+
+  $('keyboard').append(d);
+});
+
 // CSV解析
-// =====================================
-
-function parseCSV(text) {
-
-  const rows = [];
-
+function csvParse(s){
+  let rows = [];
   let row = [];
-  let cell = "";
+  let cell = '';
   let quoted = false;
 
-  for (let i = 0; i < text.length; i++) {
+  for(let i=0;i<s.length;i++){
+    const c = s[i];
 
-    const c = text[i];
-
-    if (c === '"') {
-
-      if (quoted && text[i + 1] === '"') {
+    if(c==='"'){
+      if(quoted && s[i+1]==='"'){
         cell += '"';
         i++;
-      } else {
+      }else{
         quoted = !quoted;
       }
-
-    } else if (c === "," && !quoted) {
-
+    }
+    else if(c===',' && !quoted){
       row.push(cell);
-      cell = "";
-
-    } else if (
-      (c === "\n" || c === "\r") &&
-      !quoted
-    ) {
-
-      if (c === "\r" && text[i + 1] === "\n") {
-        i++;
-      }
-
+      cell = '';
+    }
+    else if((c==='\n'||c==='\r')&&!quoted){
+      if(c==='\r'&&s[i+1]==='\n')i++;
       row.push(cell);
       rows.push(row);
-
       row = [];
-      cell = "";
-
-    } else {
-
+      cell = '';
+    }
+    else{
       cell += c;
-
     }
   }
 
-  if (cell || row.length) {
+  if(cell||row.length){
     row.push(cell);
     rows.push(row);
   }
@@ -343,581 +171,475 @@ function parseCSV(text) {
   return rows;
 }
 
+// かな→ローマ字
+const kanaMap = {
+'あ':'a','い':'i','う':'u','え':'e','お':'o',
+'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
+'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so',
+'た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to',
+'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
+'は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho',
+'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
+'や':'ya','ゆ':'yu','よ':'yo',
+'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
+'わ':'wa','を':'wo','ん':'n',
+'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
+'ざ':'za','じ':'ji','ず':'zu','ぜ':'ze','ぞ':'zo',
+'だ':'da','ぢ':'ji','づ':'zu','で':'de','ど':'do',
+'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo',
+'ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po',
+'ぁ':'xa','ぃ':'xi','ぅ':'xu','ぇ':'xe','ぉ':'xo',
+'ゃ':'xya','ゅ':'xyu','ょ':'xyo',
+'ゔ':'vu','ー':'-'
+};
 
-// =====================================
-// データ登録
-// A列：課題
-// B列：解説
-// =====================================
+const pairs = {};
 
-function registerWords(rows) {
+for(const [base,rom] of Object.entries({
+'き':'ky','ぎ':'gy','し':'sh','じ':'j',
+'ち':'ch','に':'ny','ひ':'hy','び':'by',
+'ぴ':'py','み':'my','り':'ry','ぢ':'j'
+})){
+  for(const [small,vowel] of Object.entries({
+    'ゃ':'a','ゅ':'u','ょ':'o'
+  })){
+    pairs[base+small] = rom+vowel;
+  }
+}
 
-  const words = rows.map(row => {
+Object.assign(pairs,{
+'しゃ':'sha','しゅ':'shu','しょ':'sho',
+'ちゃ':'cha','ちゅ':'chu','ちょ':'cho',
+'じゃ':'ja','じゅ':'ju','じょ':'jo',
+'てぃ':'ti','でぃ':'di',
+'ふぁ':'fa','ふぃ':'fi','ふぇ':'fe','ふぉ':'fo',
+'うぃ':'wi','うぇ':'we','うぉ':'wo'
+});
 
-    return {
-      term: String(row[0] || "").trim(),
-      meaning: String(row[1] || "").trim()
-    };
+function kanaToRomaji(str){
 
-  }).filter(item => {
+  let s = Array.from(str).map(c=>{
+    let n = c.charCodeAt(0);
+    return n>=0x30a1&&n<=0x30f6
+      ? String.fromCharCode(n-0x60)
+      : c;
+  }).join('');
 
-    if (!item.term) return false;
+  let out = '';
 
-    if (
-      item.term === "課題" ||
-      item.term === "必須用語" ||
-      item.term === "A列"
-    ) {
-      return false;
+  for(let i=0;i<s.length;i++){
+
+    let c = s[i];
+    let pair = s.slice(i,i+2);
+
+    if(c==='っ'){
+      let next =
+        pairs[s.slice(i+1,i+3)] ||
+        kanaMap[s[i+1]] || '';
+
+      out += next.startsWith('ch')
+        ? 't'
+        : next[0] || '';
+
+      continue;
     }
 
-    return true;
+    if(c==='ん'){
+      let next =
+        pairs[s.slice(i+1,i+3)] ||
+        kanaMap[s[i+1]] || '';
 
-  });
+      out += /^[aiueoyn]/.test(next)
+        ? 'nn'
+        : 'n';
 
-  wordList = words;
+      continue;
+    }
 
-  $("status").textContent =
-    `${wordList.length}語の読み込み完了`;
+    if(pairs[pair]){
+      out += pairs[pair];
+      i++;
+      continue;
+    }
 
-  $("start").disabled = false;
+    if(c==='ー'){
+      const v = out.match(/[aeiou](?!.*[aeiou])/);
+      if(v)out += v[0];
+      continue;
+    }
+
+    out += kanaMap[c] ?? c;
+  }
+
+  return out;
+}
+
+// 漢字の読みをローマ字へ変換
+function readingFor(term){
+
+  if(OVERRIDE[term]){
+    return OVERRIDE[term];
+  }
+
+  if(/^[\x20-\x7e]+$/.test(term)){
+    return term.toLowerCase().replace(/\s+/g,'');
+  }
+
+  if(!tokenizer){
+    return null;
+  }
+
+  let output = '';
+
+  for(const t of tokenizer.tokenize(term)){
+
+    const part = t.surface_form;
+
+    if(/^[\x20-\x7e]+$/.test(part)){
+      output += part.toLowerCase().replace(/\s+/g,'');
+      continue;
+    }
+
+    let reading = t.reading;
+
+    if(!reading){
+      if(/^[ぁ-ゖァ-ヺー]+$/.test(part)){
+        reading = part;
+      }else{
+        return null;
+      }
+    }
+
+    const converted = kanaToRomaji(reading);
+
+    if(!/^[a-z-]+$/i.test(converted)){
+      return null;
+    }
+
+    output += converted;
+  }
+
+  return /^[a-z0-9&.\/-]+$/i.test(output)
+    ? output
+    : null;
+}
+
+// 課題登録
+function register(rows){
+
+  words = [];
+  let excluded = [];
+
+  for(const row of rows){
+
+    const term = String(row[0]??'').trim();
+    const meaning = String(row[1]??'').trim();
+
+    if(!term || ['課題','必須用語','A列'].includes(term)){
+      continue;
+    }
+
+    const target = readingFor(term);
+
+    if(target){
+      words.push({term,meaning,target});
+    }else{
+      excluded.push(term);
+    }
+  }
+
+  $('start').disabled = !words.length;
+
+  $('status').textContent =
+    `${words.length}語を読み込みました。` +
+    (excluded.length
+      ? ` 読みを判定できない${excluded.length}語は除外：${excluded.slice(0,5).join('、')}`
+      : '');
 
   return words.length;
 }
 
+// キーボードガイド
+function guide(){
 
-// =====================================
-// Googleからデータ取得
-// =====================================
-
-async function loadGoogleData() {
-
-  $("status").textContent =
-    "Googleスプレッドシートを読み込み中...";
-
-  $("start").disabled = true;
-
-  try {
-
-    const response = await fetch(
-      CSV_URL,
-      { cache: "no-store" }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `HTTP ${response.status}`
-      );
-    }
-
-    const csv = await response.text();
-
-    if (
-      csv.trim().startsWith("<!DOCTYPE") ||
-      csv.trim().startsWith("<html")
-    ) {
-      throw new Error("CSVではなくHTMLが返されました");
-    }
-
-    const rows = parseCSV(csv);
-
-    const count = registerWords(rows);
-
-    if (count === 0) {
-      throw new Error("有効な課題が0件です");
-    }
-
-  } catch (error) {
-
-    wordList = [];
-
-    $("status").textContent =
-      "データの取得に失敗しました。" +
-      "スプレッドシートの公開設定を確認してください。" +
-      "または下の手動入力を利用してください。" +
-      "（" + error.message + "）";
-
-  }
-}
-
-
-// =====================================
-// 手動データ読み込み
-// =====================================
-
-$("loadManual").onclick = () => {
-
-  const text = $("manualData").value.trim();
-
-  if (!text) {
-    alert("データを貼り付けてください");
-    return;
-  }
-
-  const rows = text.split(/\r?\n/).map(line => {
-
-    return line.split("\t");
-
+  document.querySelectorAll('.key').forEach(k=>{
+    k.classList.remove('active');
   });
 
-  const count = registerWords(rows);
+  if(!current)return;
 
-  if (count === 0) {
-    alert("有効な課題がありません");
-    return;
-  }
+  const target = current.target;
+  const typed = $('answer').value.toLowerCase().replace(/\s+/g,'');
 
-  alert(`${count}語を読み込みました`);
+  $('typing').replaceChildren();
 
-};
+  let wrong = false;
 
+  for(let i=0;i<target.length;i++){
 
-// =====================================
-// キーボード作成
-// =====================================
+    let span = document.createElement('span');
+    span.textContent = target[i];
 
-const KEY_ROWS = [
-  "QWERTYUIOP",
-  "ASDFGHJKL",
-  "ZXCVBNM"
-];
+    if(i<typed.length){
 
-function createKeyboard() {
+      span.className =
+        typed[i]===target[i] ? 'ok' : 'bad';
 
-  const keyboard = $("keyboard");
-
-  keyboard.innerHTML = "";
-
-  KEY_ROWS.forEach(row => {
-
-    const div = document.createElement("div");
-
-    div.className = "keyrow";
-
-    for (const char of row) {
-
-      const key = document.createElement("div");
-
-      key.className = "key";
-
-      key.dataset.key = char;
-
-      key.textContent = char;
-
-      div.appendChild(key);
-
-    }
-
-    keyboard.appendChild(div);
-
-  });
-
-}
-
-createKeyboard();
-
-
-// =====================================
-// 文字列の正規化
-// =====================================
-
-function normalize(text) {
-
-  return String(text || "")
-    .normalize("NFKC")
-    .trim()
-    .toLowerCase();
-
-}
-
-
-// =====================================
-// 表示更新
-// =====================================
-
-function updateGuide() {
-
-  document.querySelectorAll(".key")
-    .forEach(key => {
-      key.classList.remove("active");
-    });
-
-  if (!playing || !currentWord) return;
-
-  const target = normalize(currentWord.term);
-
-  const typed = normalize($("answer").value);
-
-  const box = $("typing");
-
-  box.innerHTML = "";
-
-  let mismatch = false;
-
-  const targetChars = Array.from(target);
-  const typedChars = Array.from(typed);
-
-  targetChars.forEach((char, index) => {
-
-    const span = document.createElement("span");
-
-    span.textContent = char;
-
-    if (index < typedChars.length) {
-
-      if (typedChars[index] === char) {
-
-        span.className = "correct";
-
-      } else {
-
-        span.className = "wrong";
-        mismatch = true;
-
+      if(span.className==='bad'){
+        wrong = true;
       }
 
-    } else if (index === typedChars.length) {
-
-      span.className = "next";
-
+    }else if(i===typed.length){
+      span.className = 'next';
     }
 
-    box.appendChild(span);
+    $('typing').append(span);
+  }
 
-  });
-
-  if (mismatch || typedChars.length > targetChars.length) {
-
-    $("guide").textContent =
-      "入力が違います。Backspaceで修正してください。";
-
+  if(wrong||typed.length>target.length){
+    $('guide').textContent =
+      '入力ミス：Backspaceで戻してください';
     return;
   }
 
-  if (typedChars.length >= targetChars.length) {
+  if(typed.length<target.length){
 
-    $("guide").textContent = "";
+    const c = target[typed.length].toUpperCase();
 
-    return;
+    document.querySelector(
+      `[data-key="${c}"]`
+    )?.classList.add('active');
+
+    $('guide').textContent =
+      '次に押すキー：'+c;
+
+  }else{
+    $('guide').textContent = '';
   }
-
-  const nextChar = targetChars[typedChars.length];
-
-  if (/^[a-z]$/i.test(nextChar)) {
-
-    const key = nextChar.toUpperCase();
-
-    const element =
-      document.querySelector(`[data-key="${key}"]`);
-
-    if (element) {
-      element.classList.add("active");
-    }
-
-    $("guide").textContent =
-      `次に打つキー：${key}`;
-
-  } else if (/^[0-9]$/.test(nextChar)) {
-
-    $("guide").textContent =
-      `次に入力する数字：${nextChar}`;
-
-  } else {
-
-    $("guide").textContent =
-      "日本語入力で課題を入力してください";
-
-  }
-
 }
 
-
-// =====================================
 // 音声読み上げ
-// =====================================
+function speak(){
 
-function speakTerm() {
+  if(!current||!window.speechSynthesis)return;
 
-  if (!currentWord) return;
+  const u = new SpeechSynthesisUtterance(
+    current.term+'。'+current.meaning
+  );
 
-  if (!window.speechSynthesis) return;
+  u.lang = 'ja-JP';
+  u.rate = .95;
 
   speechSynthesis.cancel();
-
-  const text =
-    currentWord.term +
-    "。" +
-    currentWord.meaning;
-
-  const speech =
-    new SpeechSynthesisUtterance(text);
-
-  speech.lang = "ja-J";
-
-  speech.rate = 0.95;
-
-  speechSynthesis.speak(speech);
-
+  speechSynthesis.speak(u);
 }
 
-
-// =====================================
 // 次の問題
-// =====================================
+function next(){
 
-function nextQuestion() {
+  clearTimeout(timer);
 
-  clearTimeout(questionTimer);
-
-  if (questionNumber >= TOTAL) {
-
-    endGame();
-
+  if(round>=10){
+    end();
     return;
   }
 
   locked = false;
+  round++;
 
-  questionNumber++;
+  current =
+    words[Math.floor(Math.random()*words.length)];
 
-  const random =
-    Math.floor(Math.random() * wordList.length);
+  $('count').textContent = `${round} / 10`;
+  $('term').textContent = current.term;
+  $('meaning').textContent = current.meaning;
 
-  currentWord = wordList[random];
+  $('answer').value = '';
+  $('answer').disabled = false;
+  $('answer').focus();
 
-  $("term").textContent =
-    currentWord.term;
-
-  $("meaning").textContent =
-    currentWord.meaning;
-
-  $("progress").textContent =
-    `${questionNumber} / ${TOTAL}`;
-
-  $("answer").value = "";
-
-  $("answer").disabled = false;
-
-  $("answer").focus();
-
-  updateGuide();
-
-  speakTerm();
-
+  guide();
+  speak();
 }
 
+// スタート
+function start(){
 
-// =====================================
-// ゲーム開始
-// =====================================
-
-function startGame() {
-
-  if (!wordList.length) {
-
-    alert(
-      "課題データがありません。読み込みを確認してください。"
-    );
-
+  if(!words.length){
+    $('error').textContent =
+      '課題データを読み込んでください';
     return;
   }
 
   playing = true;
-
   locked = false;
-
-  questionNumber = 0;
-
+  round = 0;
   score = 0;
 
-  $("start").disabled = true;
+  $('start').disabled = true;
+  $('error').textContent = '';
 
-  nextQuestion();
-
+  next();
 }
 
-
-// =====================================
-// 正解判定
-// =====================================
-
-function checkAnswer() {
-
-  if (!playing) return;
-
-  if (locked) return;
-
-  if (composing) return;
-
-  const typed =
-    normalize($("answer").value);
-
-  const target =
-    normalize(currentWord.term);
-
-  if (typed === target) {
-
-    locked = true;
-
-    score++;
-
-    $("answer").disabled = true;
-
-    $("guide").textContent =
-      "正解！ 🎉";
-
-    questionTimer = setTimeout(() => {
-
-      nextQuestion();
-
-    }, 1200);
-
-  }
-
-}
-
-
-// =====================================
-// ゲーム終了
-// =====================================
-
-function endGame() {
+// 終了
+function end(){
 
   playing = false;
+  current = null;
 
-  locked = false;
+  $('term').textContent = '🎉 ゲーム終了！';
+  $('meaning').textContent =
+    `正答数：${score} / 10`;
 
-  currentWord = null;
+  $('count').textContent = '';
+  $('typing').textContent = '';
 
-  $("term").textContent =
-    "🎉 ゲーム終了！";
+  $('answer').value = '';
+  $('answer').disabled = true;
 
-  $("meaning").textContent =
-    `正答数：${score} / ${TOTAL}`;
+  $('guide').textContent = '';
 
-  $("progress").textContent = "";
-
-  $("typing").innerHTML = "";
-
-  $("answer").value = "";
-
-  $("answer").disabled = true;
-
-  $("guide").textContent = "";
-
-  $("start").disabled = false;
-
-  $("start").textContent =
-    "もう一度スタート [1]";
-
+  $('start').disabled = false;
+  $('start').textContent =
+    'もう一度スタート [1]';
 }
 
+// 入力判定
+$('answer').addEventListener('input',()=>{
 
-// =====================================
-// ボタン操作
-// =====================================
+  if(!playing||locked)return;
 
-$("start").onclick = startGame;
+  guide();
 
-$("skip").onclick = () => {
+  if(
+    $('answer').value.toLowerCase().replace(/\s+/g,'')
+    === current.target
+  ){
 
-  if (!playing || locked) return;
+    locked = true;
+    score++;
 
-  nextQuestion();
+    $('answer').disabled = true;
+    $('guide').textContent = '正解！ 🎉';
 
-};
-
-$("speak").onclick = speakTerm;
-
-
-// =====================================
-// 日本語IME対応
-// =====================================
-
-$("answer").addEventListener(
-  "compositionstart",
-  () => {
-
-    composing = true;
-
+    timer = setTimeout(next,1200);
   }
-);
-
-$("answer").addEventListener(
-  "compositionend",
-  () => {
-
-    composing = false;
-
-    updateGuide();
-
-    checkAnswer();
-
-  }
-);
-
-$("answer").addEventListener(
-  "input",
-  () => {
-
-    if (composing) return;
-
-    updateGuide();
-
-    checkAnswer();
-
-  }
-);
-
-
-// =====================================
-// ショートカット
-// =====================================
-
-document.addEventListener("keydown", event => {
-
-  if (event.repeat) return;
-
-  if (event.isComposing) return;
-
-  if (event.target.tagName === "INPUT") return;
-
-  if (event.target.tagName === "TEXTAREA") return;
-
-  if (event.key === "1" && !playing) {
-
-    event.preventDefault();
-
-    startGame();
-
-  }
-
-  if (event.key === "2" && playing) {
-
-    event.preventDefault();
-
-    if (!locked) nextQuestion();
-
-  }
-
-  if (event.key === "3" && playing) {
-
-    event.preventDefault();
-
-    speakTerm();
-
-  }
-
 });
 
+// ボタン
+$('start').onclick = start;
 
-// =====================================
+$('skip').onclick = ()=>{
+  if(playing&&!locked)next();
+};
+
+$('speak').onclick = speak;
+
+// ショートカット
+document.addEventListener('keydown',e=>{
+
+  if(
+    e.repeat ||
+    e.isComposing ||
+    ['INPUT','TEXTAREA'].includes(e.target.tagName)
+  ){
+    return;
+  }
+
+  if(e.key==='1'&&!playing){
+    e.preventDefault();
+    start();
+  }
+  else if(e.key==='2'&&playing&&!locked){
+    e.preventDefault();
+    next();
+  }
+  else if(e.key==='3'&&playing){
+    e.preventDefault();
+    speak();
+  }
+});
+
+// 手動データ読み込み
+$('load').onclick = ()=>{
+
+  if(playing)return;
+
+  const rows = $('manual').value
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map(s=>s.split('\t'));
+
+  if(!register(rows)){
+    $('error').textContent =
+      '有効な課題がありません。A列とB列をタブ区切りで貼り付けてください';
+  }
+};
+
 // 初期読み込み
-// =====================================
+async function init(){
 
-loadGoogleData();
+  const waitTokenizer = new Promise((resolve,reject)=>{
+
+    if(typeof kuromoji==='undefined'){
+      reject(new Error('日本語解析ライブラリが読み込めません'));
+      return;
+    }
+
+    kuromoji.builder({
+      dicPath:DICT_URL
+    }).build((err,t)=>
+      err ? reject(err) : resolve(t)
+    );
+  });
+
+  try{
+
+    tokenizer = await waitTokenizer;
+
+    $('status').textContent =
+      '日本語辞書を準備しました。スプレッドシートを読み込み中…';
+
+  }catch(e){
+
+    $('status').textContent =
+      '日本語辞書の読み込みに失敗しました。英語と登録済みの一部の日本語用語のみ利用できます。';
+  }
+
+  try{
+
+    const res = await fetch(CSV_URL,{
+      cache:'no-store'
+    });
+
+    if(!res.ok){
+      throw new Error('HTTP '+res.status);
+    }
+
+    const text = await res.text();
+
+    if(/^\s*</.test(text)){
+      throw new Error('CSVではなくHTMLが返されました');
+    }
+
+    const n = register(csvParse(text));
+
+    if(!n){
+      throw new Error('有効な課題がありません');
+    }
+
+  }catch(e){
+
+    $('status').textContent =
+      'スプレッドシートの取得に失敗：'+
+      e.message+
+      '。共有設定を確認するか、下の手動貼り付けを使ってください。';
+  }
+}
+
+init();
 
 </script>
-
 </body>
 </html>
